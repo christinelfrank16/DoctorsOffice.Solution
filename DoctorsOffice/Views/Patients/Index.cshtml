@@ -3,11 +3,11 @@
 }
 
 @using DoctorsOffice.Models;
-@model List<DoctorsOffice.Models.Patient>;
+@model IEnumerable<DoctorsOffice.Models.Patient>;
 
-<h1>Patients</h1>
+<h1>Patients for @User.Identity.Name</h1>
 
-@if (@Model.Count == 0)
+@if (!Model.Any())
 {
   <h3>No patients have been added yet!</h3>
 } 

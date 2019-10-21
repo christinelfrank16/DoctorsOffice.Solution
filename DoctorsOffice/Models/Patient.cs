@@ -22,6 +22,7 @@ namespace DoctorsOffice.Models
         }
         public DateTime Birthday { get; set; }
         public ICollection<DoctorPatient> Doctors { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         public Patient(){
             this.Doctors = new HashSet<DoctorPatient>();

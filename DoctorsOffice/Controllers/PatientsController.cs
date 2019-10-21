@@ -4,21 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace DoctorsOffice.Controllers
 {
+  [Authorize]
   public class PatientsController : Controller
   {
     private readonly DoctorsOfficeContext _db;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public PatientsController(DoctorsOfficeContext db)
+    public PatientsController(DoctorsOfficeContext db, UserManager<ApplicationUser> userManager)
     {
       _db = db;
+      _userManager = userManager;
     }
 
-    public ActionResult Index()
+    public async Task<ActionResult> Index()
     {
-        return View(_db.Patients.ToList());
+        var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var currentUser = await _userManager.FindByIdAsync(userId);
+        var userPatients = _db.Patients.Where(entry => entry.User.Id == currentUser.Id);
+        return View(userPatients);
     }
 
     public ActionResult Create()
@@ -28,8 +38,11 @@ namespace DoctorsOffice.Controllers
     }
 
     [HttpPost]
-    public ActionResult Create(Patient patient, int DoctorId)
+    public async Task<ActionResult> Create(Patient patient, int DoctorId)
     {
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var currentUser = await _userManager.FindByIdAsync(userId);
+      patient.User = currentUser;
       _db.Patients.Add(patient);
       if(DoctorId != 0)
       {
