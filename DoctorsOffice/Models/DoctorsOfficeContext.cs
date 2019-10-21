@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using DoctorsOffice.Models;
 
 namespace DoctorsOffice.Models
 {
-  public class DoctorsOfficeContext : DbContext
+  public class DoctorsOfficeContext : IdentityDbContext<ApplicationUser>
   {
     public virtual DbSet<Doctor> Doctors { get; set; }
     public DbSet<Patient> Patients { get; set; }
